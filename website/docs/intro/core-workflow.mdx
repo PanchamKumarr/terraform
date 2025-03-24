@@ -368,6 +368,33 @@ And after the change completes, the team can be notified of its outcome.
 There are many different ways to use Terraform: as an individual user, a single
 team, or an entire organization at scale. Choosing the best approach for the
 density of collaboration needed will provide the most return on your investment
-in the core Terraform workflow. For organizations using Terraform at scale,
-HCP Terraform introduces new layers that build on this core workflow to
-solve problems unique to teams and organizations.
+in the core Terraform workflow.
+
+The progression from individual to team to organization typically follows these stages:
+
+1. **Individual Workflow**
+
+   - Focus on the basic Write-Plan-Apply loop
+   - Local development and testing
+   - Version control for configuration tracking
+   - Direct infrastructure management
+
+2. **Team Collaboration**
+
+   - Branch-based development
+   - Pull request reviews with plan outputs
+   - Coordinated apply processes
+   - Shared state management
+   - Standardized naming and tagging
+
+3. **Organization at Scale**
+   - Centralized variable and state management
+   - Automated plan generation and reviews
+   - Controlled apply processes
+   - Cross-team collaboration
+   - Enterprise-wide standards
+
+For organizations using Terraform at scale, HCP Terraform introduces new layers
+that build on this core workflow to solve problems unique to teams and organizations.
+This progression ensures that as your infrastructure needs grow, your Terraform
+workflow can scale accordingly while maintaining security, consistency, and efficiency.
