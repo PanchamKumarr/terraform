@@ -232,6 +232,15 @@ implications of applying the change:
 - Is there anyone we need to notify that this change is happening?
 - Have we documented the verification steps for post-apply validation?
 
+After applying changes, teams should follow a verification checklist:
+
+- Confirm resource creation/modification in cloud provider console
+- Verify that dependent services are functioning correctly
+- Run relevant integration or smoke tests if available
+- Check monitoring systems for any unexpected alerts
+- Validate that backup and recovery mechanisms are still functional
+- Document any manual verification steps taken for future reference
+
 Depending on the change, sometimes team members will want to watch the apply
 output as it is happening. For teams that are running Terraform locally, this
 may involve a screen share with the team. For teams running Terraform in CI,
