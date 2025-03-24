@@ -144,6 +144,12 @@ Switched to a new branch 'feature/add-load-balancer'
 $ vim main.tf
 ```
 
+When creating branches and making changes, following consistent naming patterns helps teams track and review changes effectively:
+
+- Branch names should reflect the infrastructure component being modified (e.g., `networking/`, `compute/`, `storage/`)
+- Include the change type as a prefix (e.g., `feature/`, `fix/`, `update/`)
+- Reference related issue numbers if applicable (e.g., `feature/vpc-peering-123`)
+
 Running iterative plans is still useful as a feedback loop while authoring
 configuration, though having each team member's computer able to run them
 becomes more difficult with time. As the team and the infrastructure grows, so
