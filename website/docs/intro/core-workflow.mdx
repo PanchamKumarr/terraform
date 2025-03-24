@@ -120,175 +120,59 @@ Terraform enabling infrastructure as code.
 
 ## Working as a Team
 
-When working as a team, you should follow these best practices:
-
-1. **Branch Naming Conventions**:
-
-   - Use descriptive branch names that indicate the purpose of your changes
-   - Follow the pattern: `type/description`
-   - Examples:
-     - `feature/add-s3-bucket`
-     - `fix/ec2-instance-tagging`
-     - `docs/update-core-workflow`
-     - `refactor/terraform-state-backend`
-
-2. **Commit Message Guidelines**:
-
-   - Start with a type prefix: `feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `test:`, `chore:`
-   - Keep the first line under 72 characters
-   - Use present tense ("add feature" not "added feature")
-   - Examples:
-     ```
-     feat: add S3 bucket with versioning enabled
-     fix: correct EC2 instance tagging logic
-     docs: update core workflow best practices
-     ```
-
-3. **Code Review Process**:
-
-   - Create pull requests with clear descriptions
-   - Include relevant context and testing steps
-   - Respond promptly to review comments
-   - Keep PRs focused and manageable in size
-
-4. **State Management**:
-
-   - Use remote state storage (e.g., S3, Azure Storage)
-   - Enable state locking to prevent concurrent modifications
-   - Implement state file encryption
-   - Regular state backups
-
-5. **Module Development**:
-
-   - Version your modules using semantic versioning
-   - Document module inputs and outputs
-   - Include examples in module documentation
-   - Test modules with different configurations
-
-6. **Security Best Practices**:
-
-   - Never commit sensitive data
-   - Use environment variables or secure secret management
-   - Implement least privilege access
-   - Regular security audits of infrastructure code
-
-7. **CI/CD Integration**:
-
-   - Automate testing and validation
-   - Implement automated security scanning
-   - Use automated deployment pipelines
-   - Regular dependency updates
-
-8. **Documentation Standards**:
-
-   - Keep documentation up to date
-   - Include architecture diagrams
-   - Document deployment procedures
-   - Maintain a changelog
-
-9. **Code Organization**:
-
-   - Use consistent directory structure
-   - Separate environments (dev, staging, prod)
-   - Implement reusable modules
-   - Maintain clear variable naming
-
-10. **Monitoring and Logging**:
-    - Implement comprehensive logging
-    - Set up monitoring and alerts
-    - Track resource usage
-    - Regular performance reviews
-
-These practices help maintain code quality, improve collaboration, and ensure infrastructure stability.
+Once multiple people are collaborating on Terraform configuration, each step of the core workflow needs additional considerations to ensure smooth team collaboration. These additions parallel the changes we make when transitioning from individual to team development in traditional software projects.
 
 ### Write
 
-While each individual on a team still makes changes to Terraform configuration
-in their editor of choice, they save their changes to version control _branches_
-to avoid colliding with each other's work. Working in branches enables team
-members to resolve mutually incompatible infrastructure changes using their
-normal merge conflict workflow.
+When working in a team environment, the Write phase incorporates these key practices:
 
-```sh
-$ git checkout -b add-load-balancer
+- **Version Control Workflow**:
 
-Switched to a new branch 'add-load-balancer'
-```
+  - Use feature branches for infrastructure changes (e.g., `feature/add-vpc`, `fix/security-groups`)
+  - Follow consistent commit message patterns to clearly communicate changes:
+    ```
+    feat(networking): add VPC peering configuration
+    fix(security): update security group rules for RDS
+    ```
+  - Keep infrastructure changes focused and atomic
 
-Running iterative plans is still useful as a feedback loop while authoring
-configuration, though having each team member's computer able to run them
-becomes more difficult with time. As the team and the infrastructure grows, so
-does the number of sensitive input variables (e.g. API Keys, SSL Cert Pairs)
-required to run a plan.
-
-To avoid the burden and the security risk of each team member arranging all
-sensitive inputs locally, it's common for teams to migrate to a model in which
-Terraform operations are executed in a shared Continuous Integration (CI)
-environment. The work needed to create such a CI environment is nontrivial, and
-is outside the scope of this core workflow overview, but a full deep dive on
-this topic can be found in our
-[Running Terraform in Automation](/terraform/tutorials/automation/automate-terraform?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS)
-guide.
-
-This longer iteration cycle of committing changes to version control and then
-waiting for the CI pipeline to execute is often lengthy enough to prohibit using
-speculative plans as a feedback loop while authoring individual Terraform
-configuration changes. Speculative plans are still useful before new Terraform
-changes are applied or even merged to the main development branch, however, as
-we'll see in a minute.
+- **Module Development**:
+  - Structure reusable modules for team consumption
+  - Document module inputs, outputs, and dependencies
+  - Version modules using semantic versioning for stability
 
 ### Plan
 
-For teams collaborating on infrastructure, Terraform's plan output creates an
-opportunity for team members to review each other's work. This allows the team
-to ask questions, evaluate risks, and catch mistakes before any potentially
-harmful changes are made.
+The Plan phase in a team context requires additional coordination:
 
-The natural place for these reviews to occur is alongside pull requests within
-version control--the point at which an individual proposes a merge from their
-working branch to the shared team branch. If team members review proposed
-config changes alongside speculative plan output, they can evaluate whether the
-intent of the change is being achieved by the plan.
+- **Code Review Process**:
 
-The problem becomes producing that speculative plan output for the team to
-review. Some teams that still run Terraform locally make a practice that pull
-requests should include an attached copy of speculative plan output generated
-by the change author. Others arrange for their CI system to post speculative
-plan output to pull requests automatically.
+  - Share plan outputs in pull requests for team review
+  - Document expected infrastructure changes
+  - Highlight potential risks or dependencies
+  - Use remote state storage with locking to prevent concurrent modifications
 
-![Screenshot of Pull Request with manually posted Terraform plan output](/img/docs/manually-pasted-plan-output.png)
-
-In addition to reviewing the plan for the proper expression of its author's
-intent, the team can also make an evaluation whether they want this change to
-happen now. For example, if a team notices that a certain change could result
-in service disruption, they may decide to delay merging its pull request until
-they can schedule a maintenance window.
+- **Security Considerations**:
+  - Review sensitive resource configurations
+  - Validate compliance with security policies
+  - Ensure proper access controls are maintained
 
 ### Apply
 
-Once a pull request has been approved and merged, it's important for the team
-to review the final concrete plan that's run against the shared team branch and
-the latest version of the state file.
+Team-based Apply operations need careful orchestration:
 
-This plan has the potential to be different than the one reviewed on the pull
-request due to issues like merge order or recent infrastructural changes. For
-example, if a manual change was made to your infrastructure since the plan was
-reviewed, the plan might be different when you merge.
+- **Change Management**:
 
-It is at this point that the team asks questions about the potential
-implications of applying the change. Do we expect any service disruption from
-this change? Is there any part of this change that is high risk? Is there
-anything in our system that we should be watching as we apply this? Is there
-anyone we need to notify that this change is happening?
+  - Coordinate timing of applies with team members
+  - Document post-apply verification steps
+  - Maintain apply history for audit purposes
 
-Depending on the change, sometimes team members will want to watch the apply
-output as it is happening. For teams that are running Terraform locally, this
-may involve a screen share with the team. For teams running Terraform in CI,
-this may involve gathering around the build log.
+- **State Management**:
+  - Use remote state storage (e.g., S3, Azure Storage)
+  - Enable state locking for concurrent access
+  - Implement state backup procedures
 
-Just like the workflow for individuals, the core workflow for teams is a loop
-that plays out for each change. For some teams this loop happens a few times a
-week, for others, many times a day.
+These practices help teams collaborate effectively while maintaining the integrity of your infrastructure. For more detailed guidance on team workflows, see our [Running Terraform in Automation](/terraform/tutorials/automation/automate-terraform) guide.
 
 ## The Core Workflow Enhanced by HCP Terraform
 
